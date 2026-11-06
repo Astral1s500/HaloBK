@@ -1,0 +1,71 @@
+@import 'tailwindcss';
+@import 'daisyui/components/radialprogress.css';
+
+@source '../views/**/*.blade.php';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* School BK Siswa Dashboard Palette */
+    --color-portal-bg: #F7F8FA;
+    --color-portal-card: #FFFFFF;
+    --color-charcoal: #2B2D33;
+    --color-subtle-border: #E5E7EB;
+
+    /* Dark Anchor: Deep Slate Blue */
+    --color-anchor: #1E2A4A;
+    --color-anchor-card: #28385E;
+    --color-anchor-border: #354A7C;
+
+    /* Primary Accent: Emerald Green */
+    --color-accent: #059669;
+    --color-accent-hover: #047857;
+    --color-accent-light: #ECFDF5;
+
+    /* Desaturated Status Colors */
+    --color-sage: #7FB69E;
+    --color-sage-dark: #3F6A54;
+    --color-sage-bg: #F0F7F4;
+    --color-sage-border: #C8E3D7;
+
+    --color-amber-warm: #E8B563;
+    --color-amber-dark: #8F5F17;
+    --color-amber-bg: #FDF9F2;
+    --color-amber-border: #F5DEC0;
+
+    --color-slate-soft: #8B93A7;
+    --color-slate-soft-dark: #4A5568;
+    --color-slate-soft-bg: #F4F6FA;
+    --color-slate-soft-border: #DCE2ED;
+}
+
+/* ==========================================================================
+   DaisyUI Radial Progress - Modern Balanced Blue Theme for HaloBK
+   Warna Biru yang pas: Tidak terlalu terang (neon/cyan) & tidak terlalu gelap (navy/hitam)
+   Hex: #2563EB (Tailwind Blue-600) / #1D4ED8
+   ========================================================================== */
+.radial-progress-blue {
+    color: #2563eb;
+    /* Track ring background: melingkar halus di belakang stroke aktif */
+    background: radial-gradient(
+        farthest-side,
+        transparent calc(100% - var(--thickness) - 0.5px),
+        #e2e8f0 calc(100% - var(--thickness)),
+        #e2e8f0 100%,
+        transparent 100%
+    );
+}
+
+.radial-progress-blue-soft {
+    color: #2563eb;
+    background: radial-gradient(
+        farthest-side,
+        transparent calc(100% - var(--thickness) - 0.5px),
+        #dbeafe calc(100% - var(--thickness)),
+        #dbeafe 100%,
+        transparent 100%
+    );
+}
