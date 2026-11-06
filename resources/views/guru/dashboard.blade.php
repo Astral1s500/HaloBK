@@ -625,31 +625,39 @@ document.addEventListener('DOMContentLoaded', function () {
         guruTourDriver.drive();
     };
 
-    const hasSeenTour = sessionStorage.getItem('halobk_tour_shown_guru');
-    const isFreshLogin = {{ session('login_success') ? 'true' : 'false' }};
+    // Gunakan localStorage + key berbasis ID guru agar panduan hanya tampil
+    // SEKALI SEUMUR HIDUP per akun guru, tidak terulang meski browser ditutup/dibuka kembali.
+    const guruId = '{{ Auth::guard("guru")->id() }}';
+    const tourKey = 'halobk_tour_done_guru_' + guruId;
+    const sudahPernahLihat = localStorage.getItem(tourKey);
 
-    if (!hasSeenTour || isFreshLogin) {
-        sessionStorage.setItem('halobk_tour_shown_guru', 'true');
+    if (!sudahPernahLihat) {
+        // Tandai sebagai sudah dilihat — permanen di browser ini
+        localStorage.setItem(tourKey, '1');
 
         if (typeof Swal !== 'undefined') {
             Swal.fire({
                 icon: 'success',
-                title: 'Selamat Datang!',
-                html: '<div class="space-y-1.5 mt-1"><p class="font-bold text-slate-800 text-sm md:text-base">{{ Auth::guard("guru")->user()->nama_guru }}</p><p class="text-xs text-slate-500">Anda berhasil masuk ke Panel Guru BK HaloBK. Mari ikuti tur panduan fitur!</p></div>',
-                timer: 2300,
-                timerProgressBar: true,
+                title: '👋 Selamat Datang di HaloBK!',
+                html: '<div class="space-y-1.5 mt-1"><p class="font-bold text-slate-800 text-sm md:text-base">{{ Auth::guard("guru")->user()->nama_guru }}</p><p class="text-xs text-slate-500">Anda pertama kali masuk ke Panel Guru BK HaloBK. Mari ikuti tur singkat untuk mengenal fitur-fitur utamanya!</p></div>',
                 showConfirmButton: true,
-                confirmButtonText: 'Mulai Tur Sekarang &rarr;',
+                showDenyButton: true,
+                confirmButtonText: 'Mulai Tur Sekarang →',
+                denyButtonText: 'Lewati',
                 confirmButtonColor: '#0284c7',
+                denyButtonColor: '#94a3b8',
                 customClass: {
                     popup: 'rounded-2xl shadow-2xl p-6',
                     title: 'text-lg font-bold text-slate-900',
-                    confirmButton: 'rounded-xl px-5 py-2.5 text-xs font-semibold cursor-pointer'
+                    confirmButton: 'rounded-xl px-5 py-2.5 text-xs font-semibold cursor-pointer',
+                    denyButton: 'rounded-xl px-5 py-2.5 text-xs font-semibold cursor-pointer'
                 }
-            }).then(() => {
-                setTimeout(() => {
-                    guruTourDriver.drive();
-                }, 350);
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    setTimeout(() => {
+                        guruTourDriver.drive();
+                    }, 350);
+                }
             });
         } else {
             setTimeout(() => {

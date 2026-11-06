@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\PsikometrikService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -62,5 +63,22 @@ class Soal extends Model
     public function isEsai(): bool
     {
         return $this->tipe_soal === 'Esai';
+    }
+
+    /**
+     * Mengambil nama dimensi dari teks pertanyaan.
+     */
+    public function getDimensiAttribute(): string
+    {
+        $tipe = $this->tes ? PsikometrikService::deteksiJenis($this->tes) : PsikometrikService::TIPE_VARK;
+        return PsikometrikService::ekstrakDimensi($this->pertanyaan ?? '', $tipe);
+    }
+
+    /**
+     * Mengambil teks pertanyaan murni yang sudah dibersihkan dari tag dimensi.
+     */
+    public function getCleanPertanyaanAttribute(): string
+    {
+        return PsikometrikService::bersihkanPertanyaan($this->pertanyaan ?? '');
     }
 }

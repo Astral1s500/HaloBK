@@ -192,6 +192,18 @@ class TesController extends Controller
     }
 
     /**
+     * Otomatis mengisikan bank butir soal psikometrik standar yang seimbang ke paket asesmen.
+     */
+    public function terapkanTemplate(Tes $te)
+    {
+        $this->authorizeTes($te);
+        $total = \App\Services\PsikometrikService::terapkanTemplateKeTes($te);
+
+        return redirect()->route('guru.tes.show', $te->id_tes)
+            ->with('success', "Berhasil menambahkan {$total} butir soal psikometrik seimbang untuk asesmen {$te->jenis_psikometrik}!");
+    }
+
+    /**
      * Menghapus paket tes dan seluruh butir soal di dalamnya.
      */
     public function destroy(Tes $te)

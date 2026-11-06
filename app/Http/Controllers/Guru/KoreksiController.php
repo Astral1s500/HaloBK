@@ -259,6 +259,9 @@ class KoreksiController extends Controller
         $totalSoalCukupRawan = $analisisSoal->where('tingkat_kerawanan', 'cukup_rawan')->count();
         $totalSoalAman = $analisisSoal->where('tingkat_kerawanan', 'aman')->count();
 
+        // Analisis Psikometrik Kondisi Kelas Keseluruhan
+        $analisisKelas = \App\Services\PsikometrikService::analisisHasilKelas($te);
+
         return view('guru.koreksi.show', [
             'tes'                  => $te,
             'sesiList'             => $sesiList,
@@ -270,6 +273,7 @@ class KoreksiController extends Controller
             'totalSoalKritis'      => $totalSoalKritis,
             'totalSoalCukupRawan'  => $totalSoalCukupRawan,
             'totalSoalAman'        => $totalSoalAman,
+            'analisisKelas'        => $analisisKelas,
         ]);
     }
 
@@ -295,12 +299,16 @@ class KoreksiController extends Controller
         // Buat mapping id_soal => jawaban siswa
         $jawabanMap = $sesi->jawabanSiswas->keyBy('id_soal');
 
+        // Analisis Profil Psikometrik Individual Siswa untuk Konseling & Tindak Lanjut Ortu
+        $laporanPsikometrik = \App\Services\PsikometrikService::analisisHasilSiswa($sesi);
+
         return view('guru.koreksi.koreksi_siswa', [
-            'sesi'       => $sesi,
-            'tes'        => $sesi->tes,
-            'siswa'      => $sesi->siswa,
-            'soals'      => $soals,
-            'jawabanMap' => $jawabanMap,
+            'sesi'               => $sesi,
+            'tes'                => $sesi->tes,
+            'siswa'              => $sesi->siswa,
+            'soals'              => $soals,
+            'jawabanMap'         => $jawabanMap,
+            'laporanPsikometrik' => $laporanPsikometrik,
         ]);
     }
 

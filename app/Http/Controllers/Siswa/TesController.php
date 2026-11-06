@@ -114,7 +114,7 @@ class TesController extends Controller
         // Hitung sisa waktu pengerjaan
         $waktuMulai = $sesi->waktu_mulai_pengerjaan ?? now();
         $waktuSelesaiMaksimal = $waktuMulai->copy()->addMinutes((int) $te->durasi_menit);
-        $sisaDetik = now()->diffInSeconds($waktuSelesaiMaksimal, false);
+        $sisaDetik = (int) now()->diffInSeconds($waktuSelesaiMaksimal, false);
 
         // Jika waktu pengerjaan telah habis, otomatis selesaikan ujian
         if ($sisaDetik <= 0) {
@@ -232,10 +232,42 @@ class TesController extends Controller
             ->where('id_siswa', $siswa->id_siswa)
             ->firstOrFail();
 
+        // Jika bukan submit otomatis karena waktu habis (force_timeout), wajibkan semua soal terjawab & tidak ragu-ragu
+        if (!$request->boolean('force_timeout')) {
+            $totalSoal = $te->soals()->count();
+            $soalIds = $te->soals()->pluck('id_soal');
+
+            $jawabans = $sesi->jawabanSiswas()->whereIn('id_soal', $soalIds)->get();
+
+            // Cek butir soal yang sudah terisi
+            $terjawabCount = $jawabans->filter(function ($j) {
+                return ($j->id_pilihan !== null) || (!empty(trim((string)$j->jawaban_esai)));
+            })->count();
+
+            // Cek butir soal yang masih ditandai ragu-ragu
+            $raguCount = $jawabans->filter(function ($j) {
+                return (bool) $j->is_ragu_ragu;
+            })->count();
+
+            if ($terjawabCount < $totalSoal || $raguCount > 0) {
+                $pesan = [];
+                if ($terjawabCount < $totalSoal) {
+                    $kurang = $totalSoal - $terjawabCount;
+                    $pesan[] = "Masih ada {$kurang} butir soal yang belum dijawab.";
+                }
+                if ($raguCount > 0) {
+                    $pesan[] = "Masih ada {$raguCount} butir soal yang masih ditandai ragu-ragu.";
+                }
+
+                return redirect()->route('siswa.tes.kerjakan', $te->id_tes)
+                    ->with('error', implode(' ', $pesan) . ' Seluruh soal harus dijawab dan tanda ragu-ragu dihilangkan sebelum mengumpulkan asesmen.');
+            }
+        }
+
         $this->finalizeSesi($sesi);
 
         return redirect()->route('siswa.tes.hasil', $te->id_tes)
-            ->with('success', 'Selamat! Anda telah berhasil menyelesaikan tes ' . $te->judul . '.');
+            ->with('success', 'Selamat! Anda telah berhasil menyelesaikan asesmen ' . $te->judul . '.');
     }
 
     /**
@@ -362,14 +394,18 @@ class TesController extends Controller
             'persentase'         => $persentase,
         ];
 
+        // Analisis Diagnostik Psikometrik Komprehensif
+        $laporanPsikometrik = \App\Services\PsikometrikService::analisisHasilSiswa($sesi);
+
         return view('siswa.tes.hasil', [
-            'siswa'            => $siswa,
-            'tes'              => $te,
-            'sesi'             => $sesi,
-            'stats'            => $stats,
-            'predikat'         => $predikat,
-            'jawabanList'      => $jawabanList,
-            'durasiPengerjaan' => $durasiPengerjaanText,
+            'siswa'              => $siswa,
+            'tes'                => $te,
+            'sesi'               => $sesi,
+            'stats'              => $stats,
+            'predikat'           => $predikat,
+            'jawabanList'        => $jawabanList,
+            'durasiPengerjaan'   => $durasiPengerjaanText,
+            'laporanPsikometrik' => $laporanPsikometrik,
         ]);
     }
 

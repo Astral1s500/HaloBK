@@ -1,233 +1,238 @@
 @extends('layouts.app')
 
-@section('title', 'Koreksi Jawaban: ' . $siswa->nama_siswa)
+@section('title', 'Laporan Diagnostik & Konseling: ' . $siswa->nama_siswa)
+
+@push('styles')
+<style>
+    .card-sky {
+        background: #ffffff;
+        border: 1px solid #e0f2fe;
+        border-radius: 20px;
+        box-shadow: 0 4px 16px -2px rgba(2, 132, 199, 0.05);
+    }
+    .badge-dominant {
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 0.4rem 1.1rem;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .bar-dimensi-fill {
+        height: 8px;
+        border-radius: 9999px;
+    }
+</style>
+@endpush
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-6 pb-12">
 
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <!-- Header & Action -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
         <div>
             <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
-                <a href="{{ route('guru.dashboard') }}" class="hover:text-slate-900 transition-colors">Dashboard</a>
+                <a href="{{ route('guru.dashboard') }}" class="hover:text-sky-600 transition-colors">Dashboard</a>
                 <span>&rsaquo;</span>
-                <a href="{{ route('guru.koreksi.index') }}" class="hover:text-slate-900 transition-colors">Koreksi & Nilai</a>
+                <a href="{{ route('guru.koreksi.index') }}" class="hover:text-sky-600 transition-colors">Hasil Asessment</a>
                 <span>&rsaquo;</span>
-                <a href="{{ route('guru.koreksi.show', $tes->id_tes) }}" class="hover:text-slate-900 transition-colors">{{ $tes->judul }}</a>
+                <a href="{{ route('guru.koreksi.show', $tes->id_tes) }}" class="hover:text-sky-600 transition-colors">{{ $tes->judul }}</a>
                 <span>&rsaquo;</span>
-                <span class="text-slate-800 font-semibold">{{ $siswa->nama_siswa }}</span>
+                <span class="text-sky-700 font-semibold">{{ $siswa->nama_siswa }}</span>
             </div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Koreksi Jawaban Siswa</h1>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Laporan Diagnostik &amp; Konseling Siswa</h1>
             <p class="text-xs text-slate-500 mt-0.5">
-                Siswa: <strong>{{ $siswa->nama_siswa }}</strong> (NISN: {{ $siswa->nisn }})
-                &bull; Tes: <strong>{{ $tes->judul }}</strong>
+                Siswa: <strong>{{ $siswa->nama_siswa }}</strong> (NISN: {{ $siswa->nisn }}) &bull; Asesmen: <strong>{{ $tes->judul }}</strong>
             </p>
         </div>
 
-        <a
-            href="{{ route('guru.koreksi.show', $tes->id_tes) }}"
-            class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 py-2.5 px-4 rounded-xl transition-colors cursor-pointer shrink-0"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Kembali ke Rekapitulasi
-        </a>
-    </div>
+        <div class="flex items-center gap-2">
+            <button
+                type="button"
+                onclick="window.print()"
+                class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-300 py-2.5 px-4 rounded-xl shadow-xs transition-colors cursor-pointer"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                <span>Cetak Lembar Konseling</span>
+            </button>
 
-    <!-- Info Card Siswa -->
-    <div class="bg-slate-900 text-white rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="space-y-1">
-            <h3 class="text-sm font-bold text-white">{{ $siswa->nama_siswa }}</h3>
-            <p class="text-xs text-slate-400">
-                NISN: <span class="font-mono text-slate-300">{{ $siswa->nisn }}</span>
-                &bull; Submit: {{ $sesi->waktu_submit ? $sesi->waktu_submit->format('d M Y, H:i') : '-' }}
-            </p>
-        </div>
-        <div class="flex items-center gap-4">
-            <div class="text-center">
-                <span class="block text-2xl font-extrabold text-white">{{ number_format($sesi->total_skor, 1) }}</span>
-                <span class="block text-[10px] text-slate-400 font-medium">Total Skor</span>
-            </div>
-            <div class="text-center border-l border-slate-700 pl-4">
-                <span class="block text-2xl font-extrabold text-slate-300">{{ $soals->sum('bobot_nilai') }}</span>
-                <span class="block text-[10px] text-slate-400 font-medium">Bobot Maksimal</span>
-            </div>
+            <a
+                href="{{ route('guru.koreksi.show', $tes->id_tes) }}"
+                class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 py-2.5 px-4 rounded-xl transition-all shadow-xs cursor-pointer shrink-0"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Kembali</span>
+            </a>
         </div>
     </div>
 
-    <!-- Form Batch Penilaian -->
-    <form action="{{ route('guru.koreksi.simpanSemua', $sesi->id_sesi) }}" method="POST">
-        @csrf
+    <!-- Official Report Header (Hanya Muncul Saat Print) -->
+    <div class="hidden print:block pb-5 border-b border-slate-300 space-y-3">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-lg font-bold text-slate-900">BERKAS HASIL ASESMEN PSIKOMETRIK &amp; REKOMENDASI KONSELING</h1>
+                <p class="text-xs text-slate-600">Layanan Bimbingan Konseling Digital HaloBK</p>
+            </div>
+            <div class="text-right text-xs">
+                <span>Tanggal Cetak: {{ now()->format('d F Y, H:i') }} WIB</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 text-xs bg-slate-50 p-3 rounded-lg border border-slate-200">
+            <div>
+                <p><strong>Nama Siswa:</strong> {{ $siswa->nama_siswa }}</p>
+                <p><strong>NISN:</strong> {{ $siswa->nisn }}</p>
+                <p><strong>Kelas:</strong> {{ $tes->kelas->nama_kelas ?? 'Umum' }}</p>
+            </div>
+            <div>
+                <p><strong>Paket Asesmen:</strong> {{ $tes->judul }}</p>
+                <p><strong>Guru BK:</strong> {{ Auth::guard('guru')->user()->nama_guru }}</p>
+                <p><strong>Status Analisis:</strong> Selesai Dianalisis Sistem</p>
+            </div>
+        </div>
+    </div>
 
-        <!-- Daftar Soal & Jawaban Siswa -->
-        <div class="space-y-4">
+    <!-- ========================================================================= -->
+    <!-- 1. KARTU PROFIL NARATIF PSIKOMETRIK SISWA                                 -->
+    <!-- Menghasilkan profil naratif, potensi, kekuatan, serta rekomendasi         -->
+    <!-- ========================================================================= -->
+    <div class="card-sky p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-sky-100">
+            <div class="space-y-1.5">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="badge-dominant">
+                        ⭐ Tipe Dominan: {{ $laporanPsikometrik['label_primer'] }}
+                    </span>
+                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700">
+                        Didukung: {{ $laporanPsikometrik['label_sekunder'] }}
+                    </span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight pt-1">
+                    {{ $laporanPsikometrik['judul_profil'] }}
+                </h2>
+            </div>
+
+            <div class="px-4 py-2.5 rounded-2xl bg-sky-50 border border-sky-200 text-center shrink-0">
+                <span class="text-[11px] text-sky-600 font-medium block">Tingkat Keselarasan</span>
+                <span class="text-xl font-black text-sky-900">
+                    {{ $laporanPsikometrik['persentase_dimensi'][$laporanPsikometrik['dimensi_primer']] ?? 100 }}%
+                </span>
+            </div>
+        </div>
+
+        <!-- Uraian Naratif -->
+        <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 leading-relaxed text-slate-800 text-sm">
+            <p>{{ $laporanPsikometrik['profil_naratif'] }}</p>
+        </div>
+
+        <!-- Spektrum Skor per Dimensi -->
+        <div class="space-y-3 pt-2">
+            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Spektrum Skor per Dimensi</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                @foreach($laporanPsikometrik['persentase_dimensi'] as $dimKey => $persen)
+                    @php
+                        $infoDim = $laporanPsikometrik['dimensi_info'][$dimKey] ?? null;
+                        $isPrimer = ($dimKey === $laporanPsikometrik['dimensi_primer']);
+                    @endphp
+                    <div class="p-3.5 rounded-xl border {{ $isPrimer ? 'bg-sky-50/60 border-sky-300' : 'bg-white border-slate-200' }} space-y-1.5">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold {{ $isPrimer ? 'text-sky-900' : 'text-slate-800' }}">
+                                {{ $infoDim['nama'] ?? $dimKey }}
+                                @if($isPrimer)
+                                    <span class="text-[10px] font-bold text-sky-700 bg-sky-200/60 px-1.5 py-0.2 rounded ml-1">Dominan</span>
+                                @endif
+                            </span>
+                            <span class="font-mono font-bold {{ $isPrimer ? 'text-sky-700' : 'text-slate-600' }}">{{ $persen }}%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                            <div class="bar-dimensi-fill {{ $isPrimer ? 'bg-sky-600' : 'bg-slate-400' }}" style="width: {{ $persen }}%;"></div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- ===================================================================== -->
+        <!-- 2. DASAR KONSELING & TINDAK LANJUT BERSAMA GURU BK & ORANG TUA        -->
+        <!-- ===================================================================== -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4 border-t border-slate-100">
+            
+            <!-- Strategi Bimbingan Guru BK -->
+            <div class="p-5 rounded-2xl bg-sky-50/60 border border-sky-200 space-y-3">
+                <div class="flex items-center gap-2 text-sky-950 font-bold text-xs uppercase tracking-wider">
+                    <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;color:#0284c7;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    <span>Strategi Bimbingan Guru BK</span>
+                </div>
+                <ul class="space-y-2 text-xs text-sky-900 leading-relaxed list-disc list-inside">
+                    @foreach($laporanPsikometrik['strategi_guru_bk'] as $rek)
+                        <li>{{ $rek }}</li>
+                    @endforeach
+                </ul>
+            </div>
+
+            <!-- Tindak Lanjut Bersama Orang Tua -->
+            <div class="p-5 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-3">
+                <div class="flex items-center gap-2 text-amber-950 font-bold text-xs uppercase tracking-wider">
+                    <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;color:#d97706;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span>Materi Konseling Bersama Orang Tua</span>
+                </div>
+                <ul class="space-y-2 text-xs text-amber-900 leading-relaxed list-disc list-inside">
+                    @foreach($laporanPsikometrik['tindak_lanjut_ortu'] as $rek)
+                        <li>{{ $rek }}</li>
+                    @endforeach
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 3. Rincian Respons Jawaban Siswa -->
+    <div class="card-sky p-6 space-y-4">
+        <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">
+            Rincian Butir Jawaban Siswa ({{ $soals->count() }} Butir)
+        </h3>
+
+        <div class="space-y-3">
             @foreach($soals as $index => $soal)
                 @php
                     $jawaban = $jawabanMap->get($soal->id_soal);
-                    $isPG = ($soal->tipe_soal === 'PG');
+                    $teksPilihan = $jawaban && $jawaban->pilihanJawaban ? $jawaban->pilihanJawaban->teks_pilihan : 'Belum Dijawab';
                 @endphp
 
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 md:p-6 space-y-4">
-                    <!-- Header Soal -->
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                        <div class="flex items-center gap-2.5">
-                            <span class="w-7 h-7 rounded-lg bg-slate-900 text-white font-bold text-xs flex items-center justify-center">
-                                {{ $index + 1 }}
-                            </span>
-                            @if($isPG)
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                                    Pilihan Ganda
-                                </span>
-                            @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
-                                    Esai
-                                </span>
-                            @endif
-                            <span class="text-xs text-slate-500 font-medium">Bobot: <strong>{{ $soal->bobot_nilai }}</strong></span>
-                        </div>
-
-                        <!-- Nilai untuk soal ini -->
-                        <div class="flex items-center gap-2">
-                            @if($jawaban)
-                                @if($isPG)
-                                    @if($jawaban->pilihanJawaban && $jawaban->pilihanJawaban->is_benar)
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800">
-                                            ✓ Benar ({{ number_format($jawaban->nilai_soal, 1) }})
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-red-100 text-red-700">
-                                            ✗ Salah (0)
-                                        </span>
-                                    @endif
-                                @else
-                                    {{-- Esai: Input Penilaian Manual --}}
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="text-[11px] text-slate-500 font-medium">Nilai:</span>
-                                        <input 
-                                            type="number" 
-                                            name="nilai[{{ $jawaban->id_jawaban_siswa }}]" 
-                                            value="{{ old('nilai.' . $jawaban->id_jawaban_siswa, $jawaban->nilai_soal) }}" 
-                                            step="0.5" 
-                                            min="0" 
-                                            max="{{ $soal->bobot_nilai }}"
-                                            placeholder="0"
-                                            class="w-20 px-2 py-1 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-900 text-center focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900"
-                                        >
-                                        <span class="text-[11px] text-slate-400">/ {{ $soal->bobot_nilai }}</span>
-                                    </div>
-                                @endif
-                            @else
-                                <span class="text-xs text-slate-400 italic">Tidak Dijawab</span>
-                            @endif
-                        </div>
+                <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 space-y-1.5 text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-md bg-sky-600 text-white font-bold text-[10px] flex items-center justify-center">
+                            {{ $index + 1 }}
+                        </span>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-sky-100 text-sky-800">
+                            Dimensi: {{ $soal->dimensi }}
+                        </span>
                     </div>
 
-                    <!-- Teks Pertanyaan -->
-                    <p class="text-sm font-medium text-slate-800 leading-relaxed whitespace-pre-line">{{ $soal->pertanyaan }}</p>
+                    <p class="font-medium text-slate-800 leading-relaxed pt-1">
+                        {{ $soal->clean_pertanyaan }}
+                    </p>
 
-                    @if($soal->gambar_lampiran)
-                        <div>
-                            <img 
-                                src="{{ asset('storage/' . $soal->gambar_lampiran) }}" 
-                                alt="Lampiran Soal" 
-                                class="max-h-48 rounded-xl border border-slate-200 object-contain"
-                            >
-                        </div>
-                    @endif
-
-                    <!-- Jawaban Siswa -->
-                    @if($jawaban)
-                        @if($isPG)
-                            {{-- Tampilkan opsi PG dengan highlight jawaban siswa dan kunci benar --}}
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-2">
-                                @foreach($soal->pilihanJawabans as $pIndex => $pilihan)
-                                    @php
-                                        $huruf = chr(65 + $pIndex);
-                                        $isJawabanSiswa = ($jawaban->id_pilihan == $pilihan->id_pilihan);
-                                        $isKunciBenar = $pilihan->is_benar;
-                                    @endphp
-                                    <div class="p-2.5 rounded-xl border text-xs flex items-start gap-2.5 
-                                        @if($isJawabanSiswa && $isKunciBenar)
-                                            bg-emerald-50/70 border-emerald-300 text-emerald-950 font-semibold
-                                        @elseif($isJawabanSiswa && !$isKunciBenar)
-                                            bg-red-50/70 border-red-300 text-red-900 font-semibold
-                                        @elseif($isKunciBenar)
-                                            bg-emerald-50/50 border-emerald-200 text-emerald-800
-                                        @else
-                                            bg-slate-50 border-slate-200 text-slate-600
-                                        @endif
-                                    ">
-                                        <span class="w-5 h-5 rounded-md flex items-center justify-center font-bold shrink-0 text-[11px]
-                                            @if($isJawabanSiswa && $isKunciBenar)
-                                                bg-emerald-600 text-white
-                                            @elseif($isJawabanSiswa && !$isKunciBenar)
-                                                bg-red-500 text-white
-                                            @elseif($isKunciBenar)
-                                                bg-emerald-200 text-emerald-800
-                                            @else
-                                                bg-slate-200 text-slate-600
-                                            @endif
-                                        ">
-                                            {{ $huruf }}
-                                        </span>
-                                        <span class="flex-1 leading-relaxed">{{ $pilihan->teks_pilihan }}</span>
-
-                                        @if($isJawabanSiswa)
-                                            <span class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0
-                                                @if($isKunciBenar) bg-emerald-100 text-emerald-700
-                                                @else bg-red-100 text-red-600 @endif
-                                            ">
-                                                Jawaban Siswa
-                                            </span>
-                                        @endif
-                                        @if($isKunciBenar && !$isJawabanSiswa)
-                                            <span class="text-[9px] font-bold uppercase bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded shrink-0">
-                                                Kunci Benar
-                                            </span>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
-                        @else
-                            {{-- Tampilkan jawaban esai siswa --}}
-                            <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl space-y-2">
-                                <div class="flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                    <span class="text-xs font-bold text-amber-800">Jawaban Esai Siswa:</span>
-                                </div>
-                                <p class="text-xs text-slate-800 leading-relaxed whitespace-pre-line bg-white p-3 rounded-lg border border-amber-100">{{ $jawaban->jawaban_esai ?? '(Kosong / Tidak Dijawab)' }}</p>
-                            </div>
-                        @endif
-                    @else
-                        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                            <span class="text-xs text-slate-400 italic">Siswa tidak menjawab soal ini.</span>
-                        </div>
-                    @endif
+                    <div class="pt-1 flex items-center gap-2">
+                        <span class="text-[11px] text-slate-500 font-medium">Respons Siswa:</span>
+                        <span class="font-bold text-slate-800 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
+                            {{ $teksPilihan }}
+                        </span>
+                    </div>
                 </div>
             @endforeach
         </div>
-
-        <!-- Tombol Simpan Semua Nilai Esai -->
-        @if($soals->where('tipe_soal', 'Esai')->count() > 0)
-            <div class="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-                <a 
-                    href="{{ route('guru.koreksi.show', $tes->id_tes) }}" 
-                    class="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-800 transition-colors"
-                >
-                    Batal
-                </a>
-                <button 
-                    type="submit" 
-                    class="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 px-6 rounded-xl text-xs tracking-wide transition-colors cursor-pointer shadow-sm"
-                >
-                    Simpan Semua Nilai Esai &amp; Hitung Ulang Skor
-                </button>
-            </div>
-        @endif
-    </form>
+    </div>
 
 </div>
 @endsection

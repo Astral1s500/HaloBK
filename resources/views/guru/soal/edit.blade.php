@@ -2,41 +2,103 @@
 
 @section('title', 'Edit Butir Soal')
 
+@push('styles')
+<style>
+    .btn-sky-action {
+        background-color: #0284c7 !important;
+        color: #ffffff !important;
+        font-weight: 600;
+        font-size: 0.825rem;
+        padding: 0.65rem 1.35rem;
+        border-radius: 12px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-sky-action:hover {
+        background-color: #0369a1 !important;
+        transform: translateY(-1px);
+    }
+    .form-card-sky {
+        background: #ffffff;
+        border: 1px solid #e0f2fe;
+        border-radius: 24px;
+        box-shadow: 0 4px 20px -2px rgba(2, 132, 199, 0.06);
+    }
+    .option-card {
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 0.85rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        transition: all 0.2s ease;
+    }
+    .option-card:focus-within {
+        background: #ffffff;
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+    }
+    .option-badge {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: #e0f2fe;
+        color: #0284c7;
+        font-weight: 800;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #bae6fd;
+        cursor: pointer;
+        user-select: none;
+        flex-shrink: 0;
+    }
+</style>
+@endpush
+
 @section('content')
-<div class="max-w-3xl mx-auto space-y-6">
+<div class="max-w-3xl mx-auto space-y-6 pb-12">
 
     <!-- Header & Breadcrumb -->
     <div class="flex items-start justify-between gap-4">
         <div>
             <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
-                <a href="{{ route('guru.dashboard') }}" class="hover:text-slate-900 transition-colors">Dashboard</a>
+                <a href="{{ route('guru.dashboard') }}" class="hover:text-sky-600 transition-colors">Dashboard</a>
                 <span>&rsaquo;</span>
-                <a href="{{ route('guru.tes.index') }}" class="hover:text-slate-900 transition-colors">Paket Tes</a>
+                <a href="{{ route('guru.tes.index') }}" class="hover:text-sky-600 transition-colors">Asessment</a>
                 <span>&rsaquo;</span>
-                <a href="{{ route('guru.tes.show', $tes->id_tes) }}" class="hover:text-slate-900 transition-colors">{{ $tes->judul }}</a>
+                <a href="{{ route('guru.tes.show', $tes->id_tes) }}" class="hover:text-sky-600 transition-colors">{{ $tes->judul }}</a>
                 <span>&rsaquo;</span>
-                <span class="text-slate-800 font-semibold">Edit Soal</span>
+                <span class="text-sky-700 font-semibold">Edit Soal</span>
             </div>
             <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Edit Butir Soal</h1>
-            <p class="text-xs text-slate-500 mt-0.5">Paket: <strong>{{ $tes->judul }}</strong></p>
+            <p class="text-xs text-slate-500 mt-0.5">Asessment: <strong>{{ $tes->judul }}</strong> &bull; Tipe: {{ $tipe }}</p>
         </div>
 
         <a
             href="{{ route('guru.tes.show', $tes->id_tes) }}"
-            class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg transition-colors shrink-0 mt-1"
+            class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl transition-all shadow-xs shrink-0 mt-1 cursor-pointer"
         >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Kembali
+            <span>Kembali</span>
         </a>
     </div>
 
     <!-- Card Form -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
+    <div class="form-card-sky p-6 md:p-8">
         
         @if($errors->any())
-            <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs font-medium">
+            <div class="mb-6 bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-2xl text-xs font-medium">
                 <ul class="list-disc list-inside space-y-1">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -45,68 +107,36 @@
             </div>
         @endif
 
-        <form action="{{ route('guru.soal.update', $soal->id_soal) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <form action="{{ route('guru.soal.update', $soal->id_soal) }}" method="POST" class="space-y-6">
             @csrf
             @method('PUT')
 
-            @if($tes->isForm())
-                <div class="p-3.5 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 flex items-start gap-2.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div class="space-y-0.5">
-                        <strong class="font-bold text-blue-950">Panduan Pertanyaan Formulir:</strong>
-                        <p class="text-blue-800 text-[11px] leading-relaxed">
-                            Pilih <strong>Pilihan Ganda</strong> untuk pertanyaan beropsi pilihan, atau pilih <strong>Esai / Uraian</strong> untuk isian teks bebas data siswa.
-                        </p>
-                    </div>
-                </div>
-            @endif
+            <input type="hidden" name="tipe_soal" value="PG">
+            <input type="hidden" name="bobot_nilai" value="5">
 
-            <!-- 1. Pilihan Tipe Soal (Tab Switcher) -->
+            <!-- 1. Pilihan Dimensi Asesmen Psikometrik -->
             <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-2">
-                    Tipe Butir Soal
+                <label for="dimensi" class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-1.5 ml-1">
+                    Dimensi Pengukuran Soal <span class="text-rose-500">*</span>
                 </label>
-                <div class="grid grid-cols-2 gap-3">
-                    <label class="cursor-pointer">
-                        <input 
-                            type="radio" 
-                            name="tipe_soal" 
-                            value="PG" 
-                            id="tipePG"
-                            onchange="switchTipeSoal('PG')"
-                            {{ old('tipe_soal', $soal->tipe_soal) === 'PG' ? 'checked' : '' }}
-                            class="peer sr-only"
-                        >
-                        <div class="p-3.5 rounded-xl border-2 border-slate-200 peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white text-slate-700 transition-all text-center">
-                            <span class="block text-xs font-bold">Pilihan Ganda (PG)</span>
-                            <span class="block text-[11px] opacity-75 mt-0.5">Opsi A, B, C, D, E &amp; Koreksi Otomatis</span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer">
-                        <input 
-                            type="radio" 
-                            name="tipe_soal" 
-                            value="Esai" 
-                            id="tipeEsai"
-                            onchange="switchTipeSoal('Esai')"
-                            {{ old('tipe_soal', $soal->tipe_soal) === 'Esai' ? 'checked' : '' }}
-                            class="peer sr-only"
-                        >
-                        <div class="p-3.5 rounded-xl border-2 border-slate-200 peer-checked:border-slate-900 peer-checked:bg-slate-900 peer-checked:text-white text-slate-700 transition-all text-center">
-                            <span class="block text-xs font-bold">Esai / Uraian</span>
-                            <span class="block text-[11px] opacity-75 mt-0.5">Jawaban Terbuka &amp; Penilaian Guru</span>
-                        </div>
-                    </label>
-                </div>
+                <select 
+                    id="dimensi" 
+                    name="dimensi" 
+                    required 
+                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:bg-white transition-all cursor-pointer"
+                >
+                    @foreach($dimensiList as $dimKey => $info)
+                        <option value="{{ $dimKey }}" {{ old('dimensi', $currentDimensi) == $dimKey ? 'selected' : '' }}>
+                            Dimensi {{ $info['nama'] }} &mdash; {{ $info['karakter'] ?? $info['deskripsi'] }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
             <!-- 2. Teks Pertanyaan Soal -->
             <div>
-                <label for="pertanyaan" class="block text-xs font-semibold text-slate-700 mb-1.5">
-                    Pertanyaan / Soal
+                <label for="pertanyaan" class="block text-xs font-bold text-slate-900 mb-1.5 ml-1">
+                    Pernyataan / Butir Soal <span class="text-rose-500">*</span>
                 </label>
                 <textarea 
                     id="pertanyaan" 
@@ -114,75 +144,19 @@
                     rows="4" 
                     required
                     autofocus
-                    class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-colors"
-                >{{ old('pertanyaan', $soal->pertanyaan) }}</textarea>
+                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:bg-white transition-all leading-relaxed"
+                >{{ old('pertanyaan', $cleanPertanyaan) }}</textarea>
             </div>
 
-            <!-- 3. Lampiran Gambar (Opsional) -->
-            <div>
-                <label for="gambar_lampiran" class="block text-xs font-semibold text-slate-700 mb-1.5">
-                    Gambar Pendukung Soal <span class="text-slate-400 font-normal">(Opsional)</span>
-                </label>
-
-                @if($soal->gambar_lampiran)
-                    <div class="mb-3 p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                        <img src="{{ asset('storage/' . $soal->gambar_lampiran) }}" alt="Lampiran" class="max-h-48 rounded-lg object-contain">
-                        <label class="flex items-center gap-2 text-xs text-red-600 font-medium cursor-pointer">
-                            <input type="checkbox" name="hapus_gambar" value="1" class="rounded text-red-600 focus:ring-red-500">
-                            Hapus gambar lampiran ini
-                        </label>
-                    </div>
-                @endif
-
-                <input 
-                    type="file" 
-                    id="gambar_lampiran" 
-                    name="gambar_lampiran" 
-                    accept="image/*"
-                    class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium text-slate-900 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white hover:file:bg-slate-800 transition-colors"
-                >
-            </div>
-
-            <!-- 4. Bobot Nilai & Timer Per Soal Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- 3. Bagian Opsi Pilihan Jawaban Skala Likert -->
+            <div class="space-y-4 pt-4 border-t border-slate-100">
                 <div>
-                    <label for="bobot_nilai" class="block text-xs font-semibold text-slate-700 mb-1.5">
-                        Bobot Nilai Soal
-                    </label>
-                    <input 
-                        type="number" 
-                        step="0.5"
-                        id="bobot_nilai" 
-                        name="bobot_nilai" 
-                        value="{{ old('bobot_nilai', $soal->bobot_nilai) }}" 
-                        min="0"
-                        required
-                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-colors"
-                    >
-                </div>
-
-                <div>
-                    <label for="timer_per_soal" class="block text-xs font-semibold text-slate-700 mb-1.5">
-                        Timer Khusus Soal Ini (Detik) <span class="text-slate-400 font-normal">(Opsional)</span>
-                    </label>
-                    <input 
-                        type="number" 
-                        id="timer_per_soal" 
-                        name="timer_per_soal" 
-                        value="{{ old('timer_per_soal', $soal->timer_per_soal) }}" 
-                        placeholder="Kosongkan jika mengikuti durasi umum"
-                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-colors"
-                    >
-                </div>
-            </div>
-
-            <!-- 5. Bagian Pilihan Jawaban PG -->
-            <div id="sectionPilihanGanda" class="space-y-4 pt-4 border-t border-slate-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Opsi Pilihan Jawaban &amp; Kunci Benar</h3>
-                        <p class="text-[11px] text-slate-500">Ketikkan teks pilihan dan pilih satu tombol radio sebagai kunci jawaban benar.</p>
-                    </div>
+                    <h3 class="text-xs font-bold text-slate-900 tracking-tight flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;color:#0284c7;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        <span>Pilihan Jawaban (Skala Likert)</span>
+                    </h3>
                 </div>
 
                 <div class="space-y-3">
@@ -197,27 +171,29 @@
                         @php
                             $defaultText = isset($existingPilihan[$idx]) ? $existingPilihan[$idx]->teks_pilihan : '';
                         @endphp
-                        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start gap-3">
-                            <div class="flex items-center gap-2 pt-2 shrink-0">
+                        <div class="option-card">
+                            <div class="flex items-center gap-2 shrink-0">
                                 <input 
                                     type="radio" 
                                     id="kunci_{{ $idx }}" 
                                     name="kunci_jawaban" 
                                     value="{{ $idx }}" 
                                     {{ old('kunci_jawaban', $kunciIndex) == $idx ? 'checked' : '' }}
-                                    class="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                                    class="w-4 h-4 text-sky-600 focus:ring-sky-500 cursor-pointer"
                                 >
-                                <label for="kunci_{{ $idx }}" class="w-6 h-6 rounded-md bg-slate-900 text-white font-bold text-xs flex items-center justify-center cursor-pointer">
+                                <label for="kunci_{{ $idx }}" class="option-badge">
                                     {{ $huruf }}
                                 </label>
                             </div>
+
                             <div class="flex-1">
                                 <input 
                                     type="text" 
                                     name="pilihan[{{ $idx }}]" 
                                     value="{{ old('pilihan.' . $idx, $defaultText) }}" 
-                                    placeholder="Teks opsi {{ $huruf }}..."
-                                    class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900"
+                                    placeholder="Ketik teks opsi jawaban {{ $huruf }}..."
+                                    required
+                                    class="w-full px-3 py-2 bg-transparent border-0 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none"
                                 >
                             </div>
                         </div>
@@ -225,18 +201,22 @@
                 </div>
             </div>
 
-            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+            <!-- Tombol Aksi Simpan Perubahan -->
+            <div class="pt-5 border-t border-slate-100 flex items-center justify-end gap-3">
                 <a 
                     href="{{ route('guru.tes.show', $tes->id_tes) }}" 
-                    class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 transition-colors"
+                    class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
                 >
                     Batal
                 </a>
                 <button 
                     type="submit" 
-                    class="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2 px-5 rounded-lg text-xs tracking-wide transition-colors cursor-pointer"
+                    class="btn-sky-action"
                 >
-                    Perbarui Butir Soal
+                    <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Simpan Perubahan</span>
                 </button>
             </div>
         </form>
@@ -244,21 +224,4 @@
     </div>
 
 </div>
-
-<!-- Script Switch Tipe Soal (PG vs Esai) -->
-<script>
-function switchTipeSoal(tipe) {
-    const secPG = document.getElementById('sectionPilihanGanda');
-    if (tipe === 'Esai') {
-        secPG.classList.add('hidden');
-    } else {
-        secPG.classList.remove('hidden');
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const tipe = document.querySelector('input[name="tipe_soal"]:checked').value;
-    switchTipeSoal(tipe);
-});
-</script>
 @endsection

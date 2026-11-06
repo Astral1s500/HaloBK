@@ -1,6 +1,31 @@
 @extends('layouts.app')
 
-@section('title', 'Paket Asesmen & Tes')
+@section('title', 'Daftar Asessment')
+
+@push('styles')
+<style>
+    .btn-sky-action {
+        background-color: #0284c7 !important;
+        color: #ffffff !important;
+        font-weight: 600;
+        font-size: 0.825rem;
+        padding: 0.65rem 1.25rem;
+        border-radius: 12px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-sky-action:hover {
+        background-color: #0369a1 !important;
+        transform: translateY(-1px);
+    }
+</style>
+@endpush
 
 @section('content')
 <div class="space-y-6">
@@ -9,32 +34,32 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
-                <a href="{{ route('guru.dashboard') }}" class="hover:text-slate-900 transition-colors">Dashboard</a>
+                <a href="{{ route('guru.dashboard') }}" class="hover:text-sky-600 transition-colors">Dashboard</a>
                 <span>&rsaquo;</span>
-                <span class="text-slate-800 font-semibold">Paket Tes</span>
+                <span class="text-sky-700 font-semibold">Asessment</span>
             </div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Paket Asesmen & Tes</h1>
-            <p class="text-xs text-slate-500 mt-0.5">Kelola paket tes minat, bakat, psikotes, jadwal pengerjaan, dan bank soal.</p>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Daftar Asessment</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Kelola paket asesmen minat, bakat, psikotes, jadwal pengerjaan, dan butir soal.</p>
         </div>
 
         <div class="flex items-center gap-2">
             <a
                 href="{{ route('guru.dashboard') }}"
-                class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 py-2.5 px-4 rounded-xl transition-colors cursor-pointer"
+                class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 py-2.5 px-4 rounded-xl transition-all shadow-xs cursor-pointer"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Kembali
+                <span>Kembali</span>
             </a>
             <a 
                 href="{{ route('guru.tes.create') }}" 
-                class="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold py-2.5 px-4 rounded-xl shadow-sm transition-colors cursor-pointer"
+                class="btn-sky-action"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
-                <span>Buat Paket Tes Baru</span>
+                <span>Buat Asessment Baru</span>
             </a>
         </div>
     </div>

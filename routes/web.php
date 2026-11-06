@@ -68,8 +68,10 @@ Route::middleware('guru.auth')->prefix('guru')->name('guru.')->group(function ()
     // Modul Paket Asesmen Tes & Bank Soal
     Route::resource('tes', \App\Http\Controllers\Guru\TesController::class);
     Route::post('tes/{te}/toggle-status', [\App\Http\Controllers\Guru\TesController::class, 'toggleStatus'])->name('tes.toggleStatus');
+    Route::post('tes/{te}/terapkan-template', [\App\Http\Controllers\Guru\TesController::class, 'terapkanTemplate'])->name('tes.terapkanTemplate');
     Route::get('tes/{te}/soal/create', [\App\Http\Controllers\Guru\SoalController::class, 'create'])->name('tes.soal.create');
     Route::post('tes/{te}/soal', [\App\Http\Controllers\Guru\SoalController::class, 'store'])->name('tes.soal.store');
+    Route::post('tes/{te}/soal/batch-store', [\App\Http\Controllers\Guru\SoalController::class, 'batchStore'])->name('tes.soal.batchStore');
     Route::get('soal/{soal}/edit', [\App\Http\Controllers\Guru\SoalController::class, 'edit'])->name('soal.edit');
     Route::put('soal/{soal}', [\App\Http\Controllers\Guru\SoalController::class, 'update'])->name('soal.update');
     Route::delete('soal/{soal}', [\App\Http\Controllers\Guru\SoalController::class, 'destroy'])->name('soal.destroy');

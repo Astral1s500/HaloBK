@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\PsikometrikService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -51,7 +52,33 @@ class Tes extends Model
      */
     public function getTipeLabelAttribute(): string
     {
-        return $this->isForm() ? 'Formulir Pendataan' : 'Tes CBT';
+        return 'Asessment Psikometrik';
+    }
+
+    /**
+     * Jenis asesmen psikometrik (VARK, OCEAN, RIASEC, Sosial).
+     */
+    public function getJenisPsikometrikAttribute(): string
+    {
+        return PsikometrikService::deteksiJenis($this);
+    }
+
+    /**
+     * Meta informasi lengkap tipe psikometrik.
+     */
+    public function getInfoPsikometrikAttribute(): array
+    {
+        $all = PsikometrikService::getJenisAsesmen();
+        $jenis = $this->jenis_psikometrik;
+        return $all[$jenis] ?? $all[PsikometrikService::TIPE_VARK];
+    }
+
+    /**
+     * Analisis Keseimbangan Dimensi Butir Soal.
+     */
+    public function getAnalisisKeseimbanganAttribute(): array
+    {
+        return PsikometrikService::analisisKeseimbangan($this);
     }
 
     /**
