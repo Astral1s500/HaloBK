@@ -129,7 +129,6 @@
                         <th class="py-3.5 px-4">Judul Materi & Deskripsi</th>
                         <th class="py-3.5 px-4">Target Kelas</th>
                         <th class="py-3.5 px-4">Kategori</th>
-                        <th class="py-3.5 px-4 text-center">Warna Card</th>
                         <th class="py-3.5 px-4">File Dokumen</th>
                         <th class="py-3.5 px-4">Tanggal Unggah</th>
                         <th class="py-3.5 px-4 text-center w-36">Aksi</th>
@@ -137,9 +136,6 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-xs text-slate-700">
                     @forelse($materis as $index => $materi)
-                        @php
-                            $cfg = $materi->color_config;
-                        @endphp
                         <tr class="hover:bg-slate-50/60 transition-colors">
                             <td class="py-3.5 px-4 text-center font-medium text-slate-400">{{ $index + 1 }}</td>
                             <td class="py-3.5 px-4">
@@ -162,16 +158,10 @@
                                     {{ $materi->kategori->nama_kategori ?? 'Umum' }}
                                 </span>
                             </td>
-                            <td class="py-3.5 px-4 text-center">
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border {{ $cfg['badge'] }}">
-                                    <span class="w-1.5 h-1.5 rounded-full {{ $cfg['dot'] }}"></span>
-                                    {{ $cfg['name'] }}
-                                </span>
-                            </td>
                             <td class="py-3.5 px-4">
                                 @if($materi->file_path)
                                     <a 
-                                        href="{{ asset('storage/' . $materi->file_path) }}" 
+                                        href="{{ route('guru.materi.buka', $materi->id_materi) }}" 
                                         target="_blank" 
                                         class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 transition-colors"
                                     >
@@ -215,7 +205,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="py-8 text-center text-xs text-slate-400">
+                            <td colspan="6" class="py-8 text-center text-xs text-slate-400">
                                 Belum ada materi bimbingan yang diunggah. Silakan klik tombol <strong>+ Unggah Materi Baru</strong>.
                             </td>
                         </tr>

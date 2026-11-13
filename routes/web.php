@@ -63,6 +63,7 @@ Route::middleware('guru.auth')->prefix('guru')->name('guru.')->group(function ()
 
     // Modul Materi Bimbingan & Tambah Kategori
     Route::post('kategori', [\App\Http\Controllers\Guru\MateriController::class, 'storeKategori'])->name('kategori.store');
+    Route::get('materi/{materi}/buka', [\App\Http\Controllers\Guru\MateriController::class, 'buka'])->name('materi.buka');
     Route::resource('materi', \App\Http\Controllers\Guru\MateriController::class);
 
     // Modul Paket Asesmen Tes & Bank Soal
@@ -89,6 +90,11 @@ Route::middleware('siswa.auth')->prefix('siswa')->name('siswa.')->group(function
     Route::get('/dashboard', [\App\Http\Controllers\Siswa\DashboardController::class, 'index'])->name('dashboard');
     Route::post('/join-kelas', [\App\Http\Controllers\Siswa\DashboardController::class, 'joinKelas'])->name('joinKelas');
     Route::post('/leave-kelas', [\App\Http\Controllers\Siswa\DashboardController::class, 'leaveKelas'])->name('leaveKelas');
+
+    // Modul Materi Bimbingan Siswa
+    Route::get('/materi', [\App\Http\Controllers\Siswa\MateriController::class, 'index'])->name('materi.index');
+    Route::get('/materi/{materi}/buka', [\App\Http\Controllers\Siswa\MateriController::class, 'buka'])->name('materi.buka');
+    Route::get('/materi/{materi}/download', [\App\Http\Controllers\Siswa\MateriController::class, 'download'])->name('materi.download');
 
     // Modul Pengerjaan Tes CBT Siswa
     Route::get('/tes/{te}', [\App\Http\Controllers\Siswa\TesController::class, 'show'])->name('tes.show');

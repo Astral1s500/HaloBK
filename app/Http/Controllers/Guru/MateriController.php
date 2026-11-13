@@ -51,9 +51,8 @@ class MateriController extends Controller
         $guruId = Auth::guard('guru')->id();
         $kelasList = Kelas::where('id_guru', $guruId)->orderBy('nama_kelas')->get();
         $kategoris = Kategori::orderBy('nama_kategori')->get();
-        $availableColors = Materi::getAvailableColors();
 
-        return view('guru.materi.create', compact('kelasList', 'kategoris', 'availableColors'));
+        return view('guru.materi.create', compact('kelasList', 'kategoris'));
     }
 
     /**
@@ -95,7 +94,6 @@ class MateriController extends Controller
             'id_kelas'     => ['nullable', Rule::exists('kelas', 'id_kelas')->where('id_guru', $guruId)],
             'id_kategori'  => ['required', 'exists:kategoris,id_kategori'],
             'deskripsi'    => ['nullable', 'string'],
-            'warna'        => ['nullable', 'string', Rule::in(array_keys(Materi::getAvailableColors()))],
             'file_materi'  => ['required', 'file', 'mimes:pdf,doc,docx,ppt,pptx', 'max:10240'], // Maksimal 10MB
         ], [
             'judul_materi.required' => 'Judul materi wajib diisi.',
@@ -109,6 +107,13 @@ class MateriController extends Controller
 
         // Simpan file ke folder storage/app/public/materi_files
         $filePath = $request->file('file_materi')->store('materi_files', 'public');
+        
+        // Sinkronisasi otomatis ke public/storage jika folder fisik terpisah
+        $publicDir = public_path('storage/materi_files');
+        if (!is_dir($publicDir)) {
+            @mkdir($publicDir, 0755, true);
+        }
+        @copy(Storage::disk('public')->path($filePath), public_path('storage/' . $filePath));
 
         Materi::create([
             'id_guru'      => $guruId,
@@ -132,9 +137,8 @@ class MateriController extends Controller
         $guruId = Auth::guard('guru')->id();
         $kelasList = Kelas::where('id_guru', $guruId)->orderBy('nama_kelas')->get();
         $kategoris = Kategori::orderBy('nama_kategori')->get();
-        $availableColors = Materi::getAvailableColors();
 
-        return view('guru.materi.edit', compact('materi', 'kelasList', 'kategoris', 'availableColors'));
+        return view('guru.materi.edit', compact('materi', 'kelasList', 'kategoris'));
     }
 
     /**
@@ -150,7 +154,6 @@ class MateriController extends Controller
             'id_kelas'     => ['nullable', Rule::exists('kelas', 'id_kelas')->where('id_guru', $guruId)],
             'id_kategori'  => ['required', 'exists:kategoris,id_kategori'],
             'deskripsi'    => ['nullable', 'string'],
-            'warna'        => ['nullable', 'string', Rule::in(array_keys(Materi::getAvailableColors()))],
             'file_materi'  => ['nullable', 'file', 'mimes:pdf,doc,docx,ppt,pptx', 'max:10240'],
         ], [
             'judul_materi.required' => 'Judul materi wajib diisi.',
@@ -165,7 +168,6 @@ class MateriController extends Controller
             'id_kategori'  => $request->id_kategori,
             'judul_materi' => $request->judul_materi,
             'deskripsi'    => $request->deskripsi,
-            'warna'        => $request->input('warna', 'netral'),
         ];
 
         // Jika guru mengunggah file pengganti baru
@@ -176,11 +178,42 @@ class MateriController extends Controller
             }
 
             $data['file_path'] = $request->file('file_materi')->store('materi_files', 'public');
+            
+            // Sinkronisasi otomatis ke public/storage jika folder fisik terpisah
+            $publicDir = public_path('storage/materi_files');
+            if (!is_dir($publicDir)) {
+                @mkdir($publicDir, 0755, true);
+            }
+            @copy(Storage::disk('public')->path($data['file_path']), public_path('storage/' . $data['file_path']));
         }
 
         $materi->update($data);
 
         return redirect()->route('guru.materi.index')->with('success', 'Materi bimbingan berhasil diperbarui!');
+    }
+
+    /**
+     * Membuka dokumen materi untuk Guru BK.
+     */
+    public function buka(Materi $materi)
+    {
+        $this->authorizeMateri($materi);
+
+        if ($materi->file_path && Storage::disk('public')->exists($materi->file_path)) {
+            $fullPath = Storage::disk('public')->path($materi->file_path);
+            $mime = Storage::disk('public')->mimeType($materi->file_path) ?: 'application/octet-stream';
+
+            return response()->file($fullPath, [
+                'Content-Type' => $mime,
+                'Content-Disposition' => 'inline; filename="' . basename($materi->file_path) . '"',
+            ]);
+        }
+
+        if ($materi->file_path && file_exists(public_path('storage/' . $materi->file_path))) {
+            return response()->file(public_path('storage/' . $materi->file_path));
+        }
+
+        abort(404, 'File materi tidak ditemukan.');
     }
 
     /**

@@ -171,83 +171,7 @@
                 >{{ old('deskripsi') }}</textarea>
             </div>
 
-            <!-- Pilihan Warna Card Materi & Sample Preview -->
-            <div class="space-y-3 pt-2">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">
-                        Pilihan Warna Card Materi
-                    </label>
-                    <p class="text-[11px] text-slate-500 mb-2.5">
-                        Pilih nuansa warna kartu materi yang akan tampil pada dashboard siswa (menggunakan palet lembut dengan *medium opacity*).
-                    </p>
-
-                    <!-- Radio Grid Pilihan Warna -->
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="colorPickerGroup">
-                        @foreach($availableColors as $colorKey => $cfg)
-                            @php
-                                $isSelected = old('warna', 'netral') === $colorKey;
-                            @endphp
-                            <label class="relative flex items-center gap-2.5 p-2.5 rounded-xl border cursor-pointer transition-all {{ $isSelected ? 'border-slate-900 bg-slate-50 ring-1 ring-slate-900' : 'border-slate-200 hover:border-slate-300 bg-white' }}" id="colorOption_{{ $colorKey }}">
-                                <input 
-                                    type="radio" 
-                                    name="warna" 
-                                    value="{{ $colorKey }}" 
-                                    class="sr-only"
-                                    {{ $isSelected ? 'checked' : '' }}
-                                    onchange="updateCardColorPreview('{{ $colorKey }}')"
-                                >
-                                <span class="w-4 h-4 rounded-full {{ $cfg['dot'] }} shrink-0 border border-black/10"></span>
-                                <div class="min-w-0">
-                                    <span class="block text-xs font-bold text-slate-800 leading-tight truncate">{{ $cfg['name'] }}</span>
-                                    <span class="block text-[10px] text-slate-400 truncate">{{ $cfg['label'] }}</span>
-                                </div>
-                            </label>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Sample Preview Card Materi Dinamis -->
-                <div class="mt-4 p-4 rounded-2xl bg-slate-100/70 border border-slate-200/80 space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            Sample Preview Card (Tampilan pada Dashboard Siswa)
-                        </span>
-                        <span class="text-[10px] text-slate-400 font-medium" id="previewColorLabel">Warna: Netral</span>
-                    </div>
-
-                    <!-- Elemen Kartu Sample -->
-                    <div id="sampleMateriCard" class="w-full max-w-md p-3.5 rounded-xl border transition-all duration-200 flex flex-col justify-between gap-2.5 shadow-2xs {{ $availableColors['netral']['card_bg'] }}">
-                        <div class="space-y-1">
-                            <div class="flex items-center gap-1.5 flex-wrap">
-                                <span id="sampleBadge" class="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold border {{ $availableColors['netral']['badge'] }}">
-                                    Bimbingan Karir
-                                </span>
-                                <span class="text-[10px] text-slate-500">&bull; {{ Auth::guard('guru')->user()->nama_guru }}</span>
-                            </div>
-                            <h4 id="sampleTitle" class="text-xs font-bold text-slate-800 line-clamp-1">
-                                Panduan Memilih Jurusan Kuliah 2026
-                            </h4>
-                            <p id="sampleDesc" class="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
-                                Modul persiapan eksplorasi program studi dan jalur masuk perguruan tinggi.
-                            </p>
-                        </div>
-
-                        <div class="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[10px] text-slate-400 relative z-10">
-                            <span>{{ now()->format('d M Y') }}</span>
-                            <span id="sampleBtn" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg inline-flex items-center gap-1 border {{ $availableColors['netral']['btn'] }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
-                                <span>Buka Modul</span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Pilihan Warna dihapus -->
 
             <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
                 <a 
@@ -337,58 +261,6 @@ function saveNewKategori() {
     });
 }
 
-// 2. Script Live Preview Warna Card Materi
-const colorConfigs = @json($availableColors);
-
-function updateCardColorPreview(colorKey) {
-    const config = colorConfigs[colorKey] || colorConfigs['netral'];
-    
-    // Update border styling pada radio label
-    document.querySelectorAll('#colorPickerGroup label').forEach(lbl => {
-        lbl.className = 'relative flex items-center gap-2.5 p-2.5 rounded-xl border cursor-pointer transition-all border-slate-200 hover:border-slate-300 bg-white';
-    });
-    const activeLabel = document.getElementById('colorOption_' + colorKey);
-    if (activeLabel) {
-        activeLabel.className = 'relative flex items-center gap-2.5 p-2.5 rounded-xl border cursor-pointer transition-all border-slate-900 bg-slate-50 ring-1 ring-slate-900';
-    }
-
-    // Update elemen sample card
-    const card = document.getElementById('sampleMateriCard');
-    const badge = document.getElementById('sampleBadge');
-    const btn = document.getElementById('sampleBtn');
-    const label = document.getElementById('previewColorLabel');
-
-    if (card) {
-        card.className = 'w-full max-w-md p-3.5 rounded-xl border transition-all duration-200 flex flex-col justify-between gap-2.5 shadow-2xs ' + config.card_bg;
-    }
-    if (badge) {
-        badge.className = 'inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold border ' + config.badge;
-    }
-    if (btn) {
-        btn.className = 'text-[11px] font-semibold px-2.5 py-1 rounded-lg inline-flex items-center gap-1 border ' + config.btn;
-    }
-    if (label) {
-        label.innerText = 'Warna: ' + config.name;
-    }
-}
-
-// Live update judul & deskripsi sample
-document.addEventListener('DOMContentLoaded', function() {
-    const inputJudul = document.getElementById('judul_materi');
-    const inputDesc = document.getElementById('deskripsi');
-    const sampleTitle = document.getElementById('sampleTitle');
-    const sampleDesc = document.getElementById('sampleDesc');
-
-    if (inputJudul && sampleTitle) {
-        inputJudul.addEventListener('input', function() {
-            sampleTitle.innerText = this.value.trim() || 'Judul Materi Bimbingan';
-        });
-    }
-    if (inputDesc && sampleDesc) {
-        inputDesc.addEventListener('input', function() {
-            sampleDesc.innerText = this.value.trim() || 'Tuliskan catatan pengantar atau poin utama materi ini...';
-        });
-    }
-});
+// Script Tambah Kategori Baru Cepat
 </script>
 @endsection

@@ -88,6 +88,19 @@
         box-shadow: 0 4px 10px rgba(124, 58, 237, 0.12);
         flex-shrink: 0;
     }
+    .icon-box-materi {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        background: #fffbeb;
+        color: #d97706;
+        border: 1px solid #fde68a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(217, 119, 6, 0.12);
+        flex-shrink: 0;
+    }
 
     /* Tombol Aksi Solid Pasti Berwarna */
     .btn-sky-action {
@@ -148,6 +161,36 @@
     .btn-purple-action:hover {
         background-color: #6d28d9;
         transform: translateY(-1px);
+    }
+
+    .btn-amber-action {
+        background-color: #d97706;
+        color: #ffffff !important;
+        font-weight: 600;
+        font-size: 0.825rem;
+        padding: 0.65rem 1.25rem;
+        border-radius: 12px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25);
+        transition: all 0.2s ease;
+        border: none;
+    }
+    .btn-amber-action:hover {
+        background-color: #b45309;
+        transform: translateY(-1px);
+    }
+
+    .badge-soft-amber {
+        background: #fffbeb;
+        color: #92400e;
+        border: 1px solid #fde68a;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
     }
 
     /* Badges */
@@ -298,6 +341,19 @@
                         <span class="text-[10px] text-sky-100 font-medium">Assesment</span>
                     </div>
                 </div>
+
+                <!-- Stat 3: Materi -->
+                <div class="stat-pill">
+                    <div style="width: 32px; height: 32px; border-radius: 10px; background: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="block text-base font-extrabold text-white leading-tight">{{ $totalMateri ?? 0 }}</span>
+                        <span class="text-[10px] text-sky-100 font-medium">Materi</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Tombol Tour Panduan Fitur Guru BK Driver.js -->
@@ -331,7 +387,7 @@
                 <p class="text-xs text-slate-500 mt-0.5">Pilih menu untuk mengelola kelas binaan, pembuatan assesment, dan evaluasi hasil.</p>
             </div>
             <span class="text-xs text-sky-700 font-semibold bg-sky-50 px-3 py-1 rounded-full border border-sky-100">
-                3 Fitur Terpadu
+                4 Fitur Terpadu
             </span>
         </div>
 
@@ -427,6 +483,47 @@
                         class="btn-purple-action"
                     >
                         <span>Lihat Hasil</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Fitur 4: Materi Bimbingan -->
+            <div id="tour-card-materi" class="feature-row-card">
+                <div class="flex items-start sm:items-center gap-4">
+                    <div class="icon-box-materi">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="width:26px;height:26px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-bold text-slate-900 tracking-tight">Materi Bimbingan</h3>
+                            <span class="badge-soft-amber">{{ $totalMateri ?? 0 }} Materi Diunggah</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                            Unggah modul, PDF, atau materi edukasi (DOC, PPT) untuk siswa. Materi dapat diakses &amp; diunduh langsung oleh siswa kelas binaan.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 shrink-0 self-end sm:self-auto pt-2 sm:pt-0">
+                    <a 
+                        href="{{ route('guru.materi.create') }}" 
+                        class="btn-amber-action"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span>Upload Materi</span>
+                    </a>
+                    <a 
+                        href="{{ route('guru.materi.index') }}" 
+                        style="background:#fffbeb;color:#92400e;border:1px solid #fde68a;padding:0.65rem 1rem;border-radius:12px;font-size:0.8rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;"
+                    >
+                        <span>Kelola</span>
                         <svg xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                         </svg>
